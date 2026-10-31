@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#eef4fb" />
+  <meta name="description" content="AURORA · 极简个人工作台。" />
+  <title>AURORA · 个人工作台</title>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-core@3.21.0" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-converter@3.21.0" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-webgl@3.21.0" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/@tensorflow-models/body-segmentation@1.0.1" defer></script>
+  <link rel="stylesheet" href="style.css?v=71" />
+</head>
+<body class="login-page">
+  <div class="tech-bg" aria-hidden="true">
+    <span class="tech-grid"></span>
+    <span class="tech-glow tech-glow--one"></span>
+    <span class="tech-glow tech-glow--two"></span>
+    <span class="scanline"></span>
+  </div>
+
+  <main class="stage">
+    <div class="meteor-shower" aria-hidden="true">
+      <span class="meteor meteor-1"></span>
+      <span class="meteor meteor-2"></span>
+      <span class="meteor meteor-3"></span>
+      <span class="meteor meteor-4"></span>
+      <span class="meteor meteor-5"></span>
+    </div>
+
+    <!-- 登录卡片：初始唯一可见的页面内容 -->
+    <section class="login-card" id="loginCard" aria-labelledby="loginIntro">
+      <header class="login-topline">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3.5 14.4 9l5.6 2.4-5.6 2.4L12 19.5 9.6 13.8 4 11.4 9.6 9 12 3.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <circle cx="19" cy="5" r="1.4" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="brand-copy">
+            <span class="brand-name">AURORA</span>
+            <span class="brand-sub">PERSONAL WORKSPACE</span>
+          </span>
+        </div>
+        <span class="secure-tag"><span class="secure-dot"></span>SECURE</span>
+      </header>
+
+      <div class="login-heading">
+        <p class="eyebrow">SECURE ACCESS</p>
+        <p class="login-intro" id="loginIntro">输入访问凭据，进入你的个人工作空间。</p>
+      </div>
+
+      <form class="login-form" id="loginForm" novalidate>
+        <div class="login-field">
+          <label class="field-label" for="accountInput">账号</label>
+          <div class="input-shell">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="12" cy="8" r="3.4" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M5.2 20c.7-3.7 3.3-5.9 6.8-5.9s6.1 2.2 6.8 5.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input
+              id="accountInput"
+              name="account"
+              type="text"
+              inputmode="numeric"
+              maxlength="32"
+              autocomplete="username"
+              autocapitalize="off"
+              spellcheck="false"
+              placeholder="请输入账号"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="login-field">
+          <label class="field-label" for="passwordInput">密码</label>
+          <div class="input-shell">
+            <svg class="input-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="5" y="10" width="14" height="10" rx="2.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M8.5 10V7.8a3.5 3.5 0 0 1 7 0V10M12 14v2.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <input
+              id="passwordInput"
+              name="password"
+              type="password"
+              maxlength="64"
+              autocomplete="current-password"
+              placeholder="请输入密码"
+              required
+            />
+            <button class="password-toggle" id="togglePassword" type="button" aria-label="显示密码" aria-pressed="false">
+              <svg class="eye-icon eye-icon--open" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M2.8 12s3.4-5.7 9.2-5.7S21.2 12 21.2 12s-3.4 5.7-9.2 5.7S2.8 12 2.8 12Z" stroke="currentColor" stroke-width="1.5"/>
+                <circle cx="12" cy="12" r="2.7" stroke="currentColor" stroke-width="1.5"/>
+              </svg>
+              <svg class="eye-icon eye-icon--closed" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path d="M4 4 20 20M9.7 6.7A10.9 10.9 0 0 1 12 6.3c5.8 0 9.2 5.7 9.2 5.7a16.6 16.6 0 0 1-3.1 3.6M6.3 8.2A16.4 16.4 0 0 0 2.8 12s3.4 5.7 9.2 5.7c1.4 0 2.7-.3 3.8-.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <p class="login-success" id="loginSuccess" role="status" aria-live="polite" hidden>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5"/>
+            <path d="m8 12.2 2.6 2.6 5.4-5.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <span>身份验证成功，正在进入工作台...</span>
+        </p>
+
+        <button class="primary-button login-submit" id="loginSubmitButton" type="submit">
+          <span>进入工作台</span>
+          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M5 12h14M14 7l5 5-5 5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </form>
+
+      <p class="security-note">
+        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 3.5 5.5 6v5.3c0 4.2 2.6 7.4 6.5 9.2 3.9-1.8 6.5-5 6.5-9.2V6L12 3.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+          <path d="m9.3 12.1 1.8 1.8 3.6-3.7" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        本地验证，账号与密码仅在本页进行校验
+      </p>
+
+      <footer class="login-footer">
+        <span>AURORA WORKSPACE</span>
+        <span class="footer-signal"><i></i>READY</span>
+      </footer>
+    </section>
+
+    <!-- 登录后的工作台：左侧导航 + 右侧内容 -->
+    <section class="app-shell" id="appShell" aria-label="Aurora 工作台" tabindex="-1" hidden>
+      <aside class="sidebar">
+        <div class="brand sidebar-brand">
+          <span class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M12 3.5 14.4 9l5.6 2.4-5.6 2.4L12 19.5 9.6 13.8 4 11.4 9.6 9 12 3.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <circle cx="19" cy="5" r="1.4" fill="currentColor"/>
+            </svg>
+          </span>
+          <span class="brand-copy">
+            <span class="brand-name">AURORA</span>
+            <span class="brand-sub">WORKSPACE</span>
+          </span>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="工作台导航">
+          <p class="nav-label">WORKSPACE</p>
+
+          <button class="nav-item is-active" id="navHome" type="button" data-view="home" aria-current="page">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="m3.8 10.2 8.2-6.4 8.2 6.4v8.6a1.7 1.7 0 0 1-1.7 1.7h-4.4v-5.9h-4.2v5.9H5.5a1.7 1.7 0 0 1-1.7-1.7v-8.6Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+            <span class="nav-text">
+              <span>首页</span>
+              <small>HOME</small>
+            </span>
+          </button>
+
+          <button class="nav-item" id="navFriends" type="button" data-view="friends">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <circle cx="9" cy="8.2" r="3" stroke="currentColor" stroke-width="1.5"/>
+              <path d="M3.5 19c.6-3.3 2.8-5.3 5.5-5.3s4.9 2 5.5 5.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <path d="M15.3 5.7a2.8 2.8 0 0 1 0 5.3M16.8 13.9c2.2.4 3.7 2.2 4.2 5.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+            </svg>
+            <span class="nav-text">
+              <span>朋友</span>
+              <small>FRIENDS</small>
+            </span>
+            <span class="nav-badge" id="navFriendCount">0</span>
+          </button>
+
+          <button class="nav-item" id="navOutfit" type="button" data-view="outfit">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M8.4 4.3 5 6 3.5 9.6l2.8 1.2V20h11.4V10.8l2.8-1.2L19 6l-3.4-1.7L12 7 8.4 4.3Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+            </svg>
+            <span class="nav-text">
+              <span>穿搭</span>
+              <small>OUTFIT</small>
+            </span>
+          </button>
+
+          <button class="nav-item" id="navTodo" type="button" data-view="todo">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="4" y="4.5" width="16" height="15" rx="3" stroke="currentColor" stroke-width="1.5"/>
+              <path d="m7.8 11.8 1.7 1.7 3.2-3.4M7.8 16h4.4M15.5 16H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="nav-text">
+              <span>待办任务</span>
+              <small>TASKS</small>
+            </span>
+          </button>
+
+          <button class="nav-item" id="navMemory" type="button" data-view="memory">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="3.5" y="5" width="17" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="8.5" cy="10" r="1.5" stroke="currentColor" stroke-width="1.5"/>
+              <path d="m4.8 17 4.4-4 3 2.7 2.4-2.2 4.6 3.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="nav-text">
+              <span>回忆</span>
+              <small>MEMORIES</small>
+            </span>
+          </button>
+
+          <button class="nav-item" id="navColor" type="button" data-view="color">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7h5M13 7h7M4 12h9M17 12h3M4 17h3M11 17h9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="11" cy="7" r="1.7" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="15" cy="12" r="1.7" stroke="currentColor" stroke-width="1.5"/>
+              <circle cx="9" cy="17" r="1.7" stroke="currentColor" stroke-width="1.5"/>
+            </svg>
+            <span class="nav-text">
+              <span>调色</span>
+              <small>COLOR LAB</small>
+            </span>
+          </button>
+
+          <button class="nav-item" id="navWallet" type="button" data-view="wallet">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6.5A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="M4 9h13.5a2.5 2.5 0 0 1 0 5H4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <circle cx="16.7" cy="11.5" r="1.1" fill="currentColor"/>
+            </svg>
+            <span class="nav-text">
+              <span>小金库</span>
+              <small>BUDGET</small>
+            </span>
+          </button>
+
+          <button class="nav-item" id="navAccount" type="button" data-view="account">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <path d="M12 3.5 19 6v5.4c0 4.2-2.9 7.6-7 9.1-4.1-1.5-7-4.9-7-9.1V6l7-2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+              <path d="m9.2 11.7 1.9 2 3.5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <span class="nav-text">
+              <span>账号管理</span>
+              <small>ACCOUNT</small>
+            </span>
+          </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="sidebar-note">
+            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <ellipse cx="12" cy="6" rx="7" ry="3" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M5 6v12c0 1.7 3.1 3 7 3s7-1.3 7-3V6M5 12c0 1.7 3.1 3 7 3s7-1.3 7-3" stroke="currentColor" stroke-width="1.4"/>
+            </svg>
+            <div>
+              <strong>本地工作台</strong>
+              <span>朋友、任务、回忆与账目都保存在这台设备上。</span>
+            </div>
+          </div>
+          <div class="sidebar-signature">
+            <span>AURORA · WORKSPACE V1.0</span>
+            <span class="footer-signal"><i></i>ONLINE</span>
+          </div>
+        </div>
+      </aside>
+
+      <div class="app-content">
+        <header class="app-topbar">
+          <div class="topbar-path">
+            <span>AURORA</span>
+            <i aria-hidden="true"></i>
+            <strong id="currentSectionLabel">首页</strong>
+          </div>
+          <span class="status" id="storageStatus"><span class="status-dot"></span><span id="storageStatusText">工作台已连接</span></span>
+        </header>
+
+        <main class="content-area" id="main-content">
+          <!-- 主界面 -->
+          <section class="view-panel home-view" id="homeView" aria-labelledby="homeTitle">
+            <div class="home-top-grid">
+              <div class="home-hero">
+                <p class="eyebrow">AURORA · WORKSPACE</p>
+                <h2 id="homeTitle"><span id="greetingText">你好</span><span class="title-dot">.</span></h2>
+                <p class="home-intro">把重要的人和事，整理成清晰的一天。保持专注，保持好奇。</p>
+                <div class="home-status-line">
+                  <span class="status-dot"></span>
+                  <span>本地存储 · 数据仅保存在这台设备上</span>
+                </div>
+              </div>
+
+              <aside class="clock-card" aria-label="实时时钟">
+                <div class="clock-head">
+                  <span class="clock-label"><i></i>LOCAL TIME</span>
+                  <span class="clock-mode">24H</span>
+                </div>
+                <div class="clock-time" id="liveClock" role="timer" aria-label="当前时间">
+                  <span id="clockHours">--</span><span class="clock-colon">:</span><span id="clockMinutes">--</span><span class="clock-colon">:</span><span class="clock-seconds" id="clockSeconds">--</span>
+                </div>
+                <p class="clock-date" id="clockDate">正在同步本地时间...</p>
+                <span class="clock-glow" aria-hidden="true"></span>
+              </aside>
+            </div>
+
+            <section class="home-dashboard" aria-labelledby="homeDashboardTitle">
+              <div class="home-section-head">
+                <div>
+                  <p class="eyebrow">OVERVIEW</p>
+                  <h3 id="homeDashboardTitle">数据看板</h3>
+                </div>
+                <span>LOCAL DATA</span>
+              </div>
+              <div class="home-stats">
+                <button class="stat-card stat-card--friends" type="button" data-nav-target="navFriends" aria-label="查看朋友">
+                  <span class="stat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <circle cx="9" cy="8.2" r="3" stroke="currentColor" stroke-width="1.5"/>
+                      <path d="M3.5 19c.6-3.3 2.8-5.3 5.5-5.3s4.9 2 5.5 5.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                      <path d="M15.3 5.7a2.8 2.8 0 0 1 0 5.3M16.8 13.9c2.2.4 3.7 2.2 4.2 5.1" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                    </svg>
+                  </span>
+                  <span class="stat-label">朋友</span>
+                  <strong class="stat-value" id="homeFriendCount">0</strong>
+                  <span class="stat-note">已记录</span>
+                </button>
+                <button class="stat-card stat-card--tasks" type="button" data-nav-target="navTodo" aria-label="查看待办任务">
+                  <span class="stat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <rect x="4" y="4.5" width="16" height="15" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                      <path d="m7.8 11.8 1.7 1.7 3.2-3.4M7.8 16h4.4M15.5 16H17" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  <span class="stat-label">待办任务</span>
+                  <strong class="stat-value" id="homeTodoTotal">0</strong>
+                  <span class="stat-note">全部任务</span>
+                </button>
+                <button class="stat-card stat-card--done" type="button" data-nav-target="navTodo" aria-label="查看已完成任务">
+                  <span class="stat-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none">
+                      <circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.5"/>
+                      <path d="m8 12.2 2.6 2.6 5.4-5.6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </span>
+                  <span class="stat-label">已完成</span>
+                  <strong class="stat-value" id="homeTodoCompleted">0</strong>
+                  <span class="stat-note">任务进度</span>
+                </button>
+              </div>
+            </section>
+
+            <div class="home-widget-grid">
+              <section class="home-widget home-dock-widget" aria-labelledby="homeDockTitle">
+                <div class="home-widget-head">
+                  <div>
+                    <p class="eyebrow">SHORTCUTS</p>
+                    <h3 id="homeDockTitle">快捷入口</h3>
+                  </div>
+                  <span class="home-widget-meta">QUICK ACCESS</span>
+                </div>
+                <div class="home-dock-grid">
+                  <button class="home-app" type="button" data-widget-target="navOutfit">
+                    <span class="home-app-icon home-app-icon--outfit" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 6.2a2 2 0 1 1 2 2c-1.1 0-2 .9-2 2v1.1L4.1 16.4a2 2 0 0 0 1.1 3.6h13.6a2 2 0 0 0 1.1-3.6L12 11.3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <span class="home-app-label">穿搭</span>
+                  </button>
+                  <button class="home-app" type="button" data-widget-target="navColor">
+                    <span class="home-app-icon home-app-icon--color" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M5 7h5M14 7h5M5 12h8M17 12h2M5 17h4M13 17h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        <circle cx="12" cy="7" r="2" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="15" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="11" cy="17" r="2" stroke="currentColor" stroke-width="1.5"/>
+                      </svg>
+                    </span>
+                    <span class="home-app-label">调色</span>
+                  </button>
+                  <button class="home-app" type="button" data-widget-target="navMemory">
+                    <span class="home-app-icon home-app-icon--memory" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <rect x="3.5" y="5" width="17" height="14" rx="3" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="8.5" cy="10" r="1.6" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="m4.8 17 4.4-4 3 2.7 2.4-2.2 4.6 3.9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                    <span class="home-app-label">回忆</span>
+                  </button>
+                  <button class="home-app" type="button" data-widget-target="navWallet">
+                    <span class="home-app-icon home-app-icon--wallet" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M4 7.5A2.5 2.5 0 0 1 6.5 5H18a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6.5A2.5 2.5 0 0 1 4 16.5v-9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <path d="M4 9h13.5a2.5 2.5 0 0 1 0 5H4" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <circle cx="16.7" cy="11.5" r="1.1" fill="currentColor"/>
+                      </svg>
+                    </span>
+                    <span class="home-app-label">小金库</span>
+                  </button>
+                  <button class="home-app" id="homeAppAccount" type="button" data-widget-target="navAccount" hidden>
+                    <span class="home-app-icon home-app-icon--account" aria-hidden="true">
+                      <svg viewBox="0 0 24 24" fill="none">
+                        <path d="M12 3.5 19 6v5.4c0 4.2-2.9 7.6-7 9.1-4.1-1.5-7-4.9-7-9.1V6l7-2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                        <circle cx="12" cy="10" r="2.1" stroke="currentColor" stroke-width="1.5"/>
+                        <path d="M8.7 16.2c.6-1.8 1.8-2.8 3.3-2.8s2.7 1 3.3 2.8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                      </svg>
+                    </span>
+                    <span class="home-app-label">账号管理</span>
+                  </button>
+                </div>
+              </section>
+
+              <section class="home-widget home-inspiration-widget" aria-labelledby="homeInspirationTitle">
+                <div class="home-widget-head">
+                  <div>
+                    <p class="eyebrow">RANDOM NOTE</p>
+                    <h3 id="homeInspirationTitle">随机灵感</h3>
+                  </div>
+                  <button class="home-widget-icon-button" id="inspirationRefresh" type="button" aria-label="换一条灵感">↻</button>
+                </div>
+                <p class="home-inspiration-text" id="inspirationText">把复杂的事情，做简单。</p>
+                <span class="home-inspiration-meta" id="inspirationMeta">NOTE 01 / 08</span>
+              </section>
+
+              <section class="home-widget home-quicktodo-widget" aria-labelledby="homeQuickTodoTitle">
+                <div class="home-widget-head">
+                  <div>
+                    <p class="eyebrow">TASKS</p>
+                    <h3 id="homeQuickTodoTitle">待办任务 · 快捷</h3>
+                  </div>
+                  <button class="home-widget-icon-button home-widget-add" id="quickTodoToggle" type="button" aria-label="快速添加待办任务" aria-expanded="false">+</button>
+                </div>
+                <div class="home-quick-todo-list" id="homeQuickTodoList"></div>
+                <form class="home-quick-todo-form" id="homeQuickTodoForm" hidden>
+                  <input
+                    class="home-widget-input"
+                    id="homeQuickTodoInput"
+                    type="text"
+                    maxlength="120"
+                    placeholder="添加一条待办..."
+                    autocomplete="off"
+                  />
+                  <button class="home-quick-todo-submit" type="submit">添加</button>
+                </form>
+                <p class="home-quick-todo-status" id="homeQuickTodoStatus" role="status" aria-live="polite"></p>
+              </section>
+            </div>
+          </section>
+
+          <!-- 朋友管理 -->
+          <section class="view-panel friends-view" id="friendsView" aria-labelledby="friendsTitle" hidden>
+            <div class="section-heading">
+              <p class="eyebrow">FRIENDS</p>
+              <div class="section-title-row">
+                <h2 id="friendsTitle">朋友</h2>
+                <span class="count-pill" id="friendCountPill">0 位</span>
+              </div>
+              <p class="section-intro">记录朋友的基本信息，保持清晰的联系人列表。</p>
+            </div>
+
+            <form class="friend-form" id="friendForm" novalidate>
+              <div class="form-heading">
+                <h3>添加朋友</h3>
+                <span>FRIEND LIST</span>
+              </div>
+
+              <div class="friend-fields">
+                <div class="field-group">
+                  <label class="field-label" for="friendName">名字</label>
+                  <input
+                    id="friendName"
+                    name="friendName"
+                    type="text"
+                    maxlength="40"
+                    autocomplete="off"
+                    placeholder="例如：林小满"
+                    required
+                  />
+                </div>
+
+                <div class="field-group">
+                  <label class="field-label" for="friendBirthday">生日</label>
+                  <input
+                    id="friendBirthday"
+                    name="friendBirthday"
+                    type="text"
+                    maxlength="10"
+                    autocomplete="off"
+                    spellcheck="false"
+                    placeholder="例如：2000-01-01"
+                    required
+                  />
+                </div>
+
+                <div class="field-group field-group--wide">
+                  <label class="field-label" for="friendPersonality">性格</label>
+                  <input
+                    id="friendPersonality"
+                    name="friendPersonality"
+                    type="text"
+                    maxlength="60"
+                    autocomplete="off"
+                    placeholder="例如：温柔、幽默、喜欢冒险"
+                    required
+                  />
+                </div>
+              </div>
+
+              <div class="friend-form-actions">
+                <p class="form-status" id="friendStatus" role="status" aria-live="polite"></p>
+                <button class="primary-button add-friend-button" type="submit">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                  </svg>
+                  <span>添加</span>
+                </button>
+              </div>
+            </form>
+
+            <section class="friend-list-section" aria-labelledby="friendListTitle">
+              <div class="friend-list-head">
+                <h3 id="friendListTitle">朋友</h3>
+                <span id="friendListMeta">0 位朋友</span>
+              </div>
+              <div class="friend-list" id="friendList"></div>
+            </section>
+          </section>
+
+          <!-- 穿搭助手 -->
+          <section class="view-panel outfit-view" id="outfitView" aria-labelledby="outfitTitle" hidden>
+            <div class="section-heading">
+              <p class="eyebrow">STYLE CONSULTANT</p>
+              <div class="section-title-row">
+                <h2 id="outfitTitle">穿搭助手</h2>
+                <span class="count-pill">BMI STYLE</span>
+              </div>
+              <p class="section-intro">填写身高、体重并选择性别，根据 BMI 生成适合你的穿搭方向。</p>
+            </div>
+
+            <form class="outfit-form" id="outfitForm" novalidate>
+              <div class="form-heading">
+                <h3>身体数据</h3>
+                <span>STYLE PROFILE</span>
+              </div>
+
+              <div class="outfit-fields">
+                <div class="field-group">
+                  <label class="field-label" for="heightInput">身高</label>
+                  <div class="measure-input">
+                    <input
+                      id="heightInput"
+                      name="height"
+                      type="number"
+                      inputmode="decimal"
+                      min="80"
+                      max="250"
+                      step="0.1"
+                      placeholder="175"
+                      required
+                    />
+                    <span>cm</span>
+                  </div>
+                </div>
+
+                <div class="field-group">
+                  <label class="field-label" for="weightInput">体重</label>
+                  <div class="measure-input">
+                    <input
+                      id="weightInput"
+                      name="weight"
+                      type="number"
+                      inputmode="decimal"
+                      min="20"
+                      max="300"
+                      step="0.1"
+                      placeholder="65"
+                      required
+                    />
+                    <span>kg</span>
+                  </div>
+                </div>
+
+                <fieldset class="gender-field" id="genderField">
+                  <legend class="field-label">性别</legend>
+                  <div class="gender-options">
+                    <label class="gender-option">
+                      <input type="radio" name="outfitGender" value="male" required />
+                      <span class="gender-option-content">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <circle cx="10" cy="14" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+                          <path d="m13.2 10.8 6-6M15 4.8h4.2V9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        男
+                      </span>
+                    </label>
+
+                    <label class="gender-option">
+                      <input type="radio" name="outfitGender" value="female" required />
+                      <span class="gender-option-content">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <circle cx="12" cy="9" r="4.5" stroke="currentColor" stroke-width="1.5"/>
+                          <path d="M12 13.5V21M8.5 17.5h7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                        </svg>
+                        女
+                      </span>
+                    </label>
+                  </div>
+                </fieldset>
+              </div>
+
+              <div class="outfit-form-actions">
+                <p class="form-status" id="outfitStatus" role="status" aria-live="polite"></p>
+                <button class="primary-button get-outfit-button" type="submit">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M12 3.5 13.9 8.1 18.5 10l-4.6 1.9L12 16.5l-1.9-4.6L5.5 10l4.6-1.9L12 3.5Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                    <path d="M18.5 15.5v4M16.5 17.5h4" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+                  </svg>
+                  <span>获取穿搭建议</span>
+                </button>
+              </div>
+            </form>
+
+            <div class="outfit-result" id="outfitResult" aria-live="polite">
+              <div class="outfit-result-empty">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M8.4 4.3 5 6 3.5 9.6l2.8 1.2V20h11.4V10.8l2.8-1.2L19 6l-3.4-1.7L12 7 8.4 4.3Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                  <path d="M9.2 20v-4.5h5.6V20" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+                </svg>
+                <strong>等待生成你的穿搭方案</strong>
+                <span>填写身高、体重并选择性别，建议会展示在这里。</span>
+              </div>
+            </div>
+
+            <section class="makeup-card" aria-labelledby="makeupTitle">
+              <div class="makeup-head">
+                <div>
+                  <p class="eyebrow">MAKEUP STUDIO</p>
+                  <h3 id="makeupTitle">妆容定制</h3>
+                </div>
+                <span class="makeup-badge">DOUYIN TUTORIAL</span>
+              </div>
+              <p class="makeup-intro">选择脸型与妆容类型，生成一条专属的抖音教程搜索。</p>
+
+              <div class="makeup-grid">
+                <div class="makeup-group" role="group" aria-labelledby="makeupFaceLabel">
+                  <p class="makeup-label" id="makeupFaceLabel">脸型</p>
+                  <div class="makeup-options" id="makeupFaceOptions">
+                    <button class="makeup-option" type="button" data-value="圆脸" aria-pressed="false">圆脸</button>
+                    <button class="makeup-option" type="button" data-value="方脸" aria-pressed="false">方脸</button>
+                    <button class="makeup-option" type="button" data-value="长脸" aria-pressed="false">长脸</button>
+                    <button class="makeup-option" type="button" data-value="瓜子脸" aria-pressed="false">瓜子脸</button>
+                    <button class="makeup-option" type="button" data-value="鹅蛋脸" aria-pressed="false">鹅蛋脸</button>
+                  </div>
+                </div>
+
+                <div class="makeup-group" role="group" aria-labelledby="makeupTypeLabel">
+                  <p class="makeup-label" id="makeupTypeLabel">妆容类型</p>
+                  <div class="makeup-options" id="makeupTypeOptions">
+                    <button class="makeup-option" type="button" data-value="淡妆" aria-pressed="false">淡妆</button>
+                    <button class="makeup-option" type="button" data-value="浓妆" aria-pressed="false">浓妆</button>
+                    <button class="makeup-option" type="button" data-value="素颜" aria-pressed="false">素颜</button>
+                  </div>
+                </div>
+              </div>
+
+              <div class="makeup-footer">
+                <p class="makeup-summary" id="makeupSummary" role="status" aria-live="polite">请选择脸型与妆容类型</p>
+                <a
+                  class="makeup-cta is-disabled"
+                  id="makeupTutorialLink"
+                  href="#"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-disabled="true"
+                  tabindex="-1"
+                >
+                  <span id="makeupCtaText">选择脸型与妆容</span>
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </a>
+              </div>
+            </section>
+
+            <section class="photo-guide" id="photoGuide" aria-labelledby="photoGuideTitle" aria-live="polite" hidden>
+              <div class="photo-guide-head">
+                <div>
+                  <p class="eyebrow">PHOTO SHOOT GUIDE</p>
+                  <h3 id="photoGuideTitle">出片指南</h3>
+                </div>
+                <span class="photo-guide-badge">LIGHT &amp; LOCATION</span>
+              </div>
+              <p class="photo-guide-intro">根据你已完成的场景、风格、脸型与妆容实时生成。</p>
+
+              <div class="photo-guide-grid">
+                <article class="photo-guide-block">
+                  <p class="photo-guide-label">
+                    <span>📍 出片环境</span>
+                    <span
+                      class="photo-guide-custom-hint"
+                      id="photoGuideCustomHint"
+                      role="status"
+                      aria-live="polite"
+                      hidden
+                    >当前已替换为您自定义的风景</span>
+                  </p>
+                  <h4 class="photo-guide-title" id="photoGuideSceneTitle"></h4>
+                  <p class="photo-guide-text" id="photoGuideEnvironment"></p>
+                  <div class="photo-guide-locations" id="photoGuideLocations" role="group" aria-label="预设地点">
+                    <button class="photo-guide-location" type="button" data-location="咖啡馆" aria-pressed="false">咖啡馆</button>
+                    <button class="photo-guide-location" type="button" data-location="海边" aria-pressed="false">海边</button>
+                    <button class="photo-guide-location" type="button" data-location="游乐园" aria-pressed="false">游乐园</button>
+                    <button class="photo-guide-location" type="button" data-location="街角" aria-pressed="false">街角</button>
+                    <button class="photo-guide-location" type="button" data-location="自然风景" aria-pressed="false">自然风景</button>
+                  </div>
+                  <div class="photo-guide-custom-scenery">
+                    <input
+                      class="photo-guide-custom-input"
+                      id="photoGuideCustomScenery"
+                      type="text"
+                      maxlength="24"
+                      autocomplete="off"
+                      placeholder="或者输入自定义风景（如：城堡、游乐园、咖啡馆）"
+                      aria-label="自定义风景"
+                    />
+                  </div>
+                </article>
+
+                <article class="photo-guide-block">
+                  <p class="photo-guide-label">⏰ 最佳时间线</p>
+                  <h4 class="photo-guide-title" id="photoGuideTimeTitle"></h4>
+                  <p class="photo-guide-text" id="photoGuideTimeline"></p>
+                  <div class="photo-guide-times" id="photoGuideTimes" role="group" aria-label="自定义时间">
+                    <button class="photo-guide-time" type="button" data-time="早晨" aria-pressed="false">早晨</button>
+                    <button class="photo-guide-time" type="button" data-time="中午" aria-pressed="false">中午</button>
+                    <button class="photo-guide-time" type="button" data-time="下午" aria-pressed="false">下午</button>
+                    <button class="photo-guide-time" type="button" data-time="傍晚" aria-pressed="false">傍晚</button>
+                    <button class="photo-guide-time" type="button" data-time="晚上" aria-pressed="false">晚上</button>
+                  </div>
+                </article>
+              </div>
+
+              <p class="photo-guide-summary" id="photoGuideSummary"></p>
+
+              <a
+                class="photo-guide-cta is-disabled"
+                id="photoGuideCta"
+                href="#"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-disabled="true"
+                tabindex="-1"
+              >
+                <span>📱 去抖音看同款成品照</span>
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M5 12h14M13 6l6 6-6 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </a>
+            </section>
+          </section>
+
+          <!-- 待办任务 -->
+          <section class="view-panel todo-view" id="todoView" aria-labelledby="todoTitle" hidden>
+            <div class="section-heading">
+              <p class="eyebrow">TASKS</p>
+              <div class="section-title-row">
+                <h2 id="todoTitle">待办任务</h2>
+                <span class="count-pill" id="todoCountPill">0 待办</span>
+              </div>
+              <p class="section-intro">记录需要完成的事情，按优先级逐项处理。</p>
+            </div>
+
+            <form class="todo-form" id="todoForm" novalidate>
+              <div class="todo-input-shell">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+                <input
+                  id="todoInput"
+                  name="todo"
+                  type="text"
+                  maxlength="120"
+                  autocomplete="off"
+                  placeholder="添加一条新的待办..."
+                  aria-label="输入新任务"
+                  required
+                />
+              </div>
+              <button class="primary-button add-task-button" type="submit">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                  <path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                </svg>
+                <span>添加任务</span>
+              </button>
+            </form>
+
+            <p class="form-status todo-form-status" id="todoStatus" role="status" aria-live="polite"></p>
+
+            <section class="todo-list-section" aria-labelledby="todoListTitle">
+              <div class="todo-list-head">
+                <h3 id="todoListTitle">任务列表</h3>
+                <span id="todoListMeta">0 项任务</span>
+              </div>
+              <div class="todo-list" id="todoList"></div>
+            </section>
+          </section>
+
+          <!-- 回忆 -->
+          <section class="view-panel memory-view" id="memoryView" aria-labelledby="memoryTitle" hidden>
+            <div class="section-heading">
+              <p class="eyebrow">MEMORIES</p>
+              <div class="section-title-row">
+                <h2 id="memoryTitle">回忆</h2>
+                <span class="count-pill" id="memoryCountPill">0 条</span>
+              </div>
+              <p class="section-intro">保存照片、视频与声音。输入访问密码，查看本地回忆。</p>
+            </div>
+
+            <section class="memory-gate" id="memoryGate" aria-labelledby="memoryGateTitle">
+              <div class="memory-gate-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <rect x="5" y="10" width="14" height="10" rx="2.5" stroke="currentColor" stroke-width="1.5"/>
+                  <path d="M8.5 10V7.8a3.5 3.5 0 0 1 7 0V10M12 14v2.4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <p class="eyebrow">PRIVATE ACCESS</p>
+              <h3 id="memoryGateTitle">回忆</h3>
+              <p class="memory-gate-intro">输入访问密码，打开这段本地回忆。</p>
+
+              <form class="memory-unlock-form" id="memoryUnlockForm" novalidate>
+                <div class="memory-password-shell" id="memoryPasswordShell">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M7.5 10V7.7a4.5 4.5 0 0 1 9 0V10M6 10h12a1.5 1.5 0 0 1 1.5 1.5v7A1.5 1.5 0 0 1 18 20H6a1.5 1.5 0 0 1-1.5-1.5v-7A1.5 1.5 0 0 1 6 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                  </svg>
+                  <input
+                    id="memoryPassword"
+                    type="password"
+                    maxlength="32"
+                    autocomplete="off"
+                    placeholder="输入访问密码"
+                    aria-label="回忆访问密码"
+                    required
+                  />
+                </div>
+                <button class="primary-button" type="submit">打开回忆</button>
+              </form>
+
+              <p class="memory-gate-status" id="memoryGateStatus" role="status" aria-live="polite"></p>
+              <p class="memory-gate-hint">本地验证 · 密码仅用于本地访问</p>
+            </section>
+
+            <div class="memory-content" id="memoryContent" tabindex="-1" hidden>
+              <form class="memory-form" id="memoryForm" novalidate>
+                <div class="form-heading">
+                  <h3>添加一段回忆</h3>
+                  <span>LOCAL MEMORY</span>
+                </div>
+
+                <div class="memory-form-grid">
+                  <div class="field-group memory-upload-field">
+                    <span class="field-label">媒体文件</span>
+                    <input class="memory-file-input" id="memoryFile" type="file" accept="image/*,video/*,audio/*" />
+                    <label class="memory-file-drop" id="memoryFileDrop" for="memoryFile">
+                      <svg class="memory-drop-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <rect x="3.5" y="5" width="17" height="14" rx="3" stroke="currentColor" stroke-width="1.4"/>
+                        <circle cx="8.5" cy="10" r="1.5" stroke="currentColor" stroke-width="1.4"/>
+                        <path d="m4.8 17 4.4-4 3 2.7 2.4-2.2 4.6 3.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                      <strong class="memory-drop-title">点击选择文件，或将文件拖拽到这里，也可以直接 Ctrl+V 粘贴图片</strong>
+                      <span class="memory-drop-sub">支持图片 / 视频 / 音乐 · 文件不会写入 localStorage</span>
+                    </label>
+                    <div class="memory-pending-preview" id="memoryPendingPreview" hidden></div>
+                  </div>
+
+                  <div class="field-group">
+                    <label class="field-label" for="memoryCaption">文字描述</label>
+                    <input
+                      class="memory-caption-input"
+                      id="memoryCaption"
+                      type="text"
+                      maxlength="160"
+                      autocomplete="off"
+                      placeholder="写下这次回忆..."
+                    />
+                  </div>
+                </div>
+
+                <div class="memory-form-actions">
+                  <p class="form-status" id="memoryStatus" role="status" aria-live="polite"></p>
+                  <button class="primary-button save-memory-button" type="submit">保存这段回忆</button>
+                </div>
+              </form>
+
+              <section class="memory-list-section" aria-labelledby="memoryListTitle">
+                <div class="memory-list-head">
+                  <h3 id="memoryListTitle">回忆</h3>
+                  <span id="memoryListMeta">0 条</span>
+                </div>
+                <div class="memory-list" id="memoryList"></div>
+              </section>
+            </div>
+          </section>
+
+          <!-- 调色 -->
+          <section class="view-panel color-view" id="colorView" aria-labelledby="colorTitle" hidden>
+            <div class="section-heading">
+              <p class="eyebrow">COLOR STUDIO</p>
+              <div class="section-title-row">
+                <h2 id="colorTitle">调色</h2>
+                <span class="count-pill">SOFT GLOW</span>
+              </div>
+              <p class="section-intro">一键网感滤镜，细腻微调，把今天调成喜欢的颜色。</p>
+            </div>
+
+            <div class="color-workspace">
+              <article class="color-preview-card">
+                <div class="color-preview-head">
+                  <div>
+                    <p class="eyebrow">PORTRAIT PREVIEW</p>
+                    <h3 id="colorPreviewTitle">原图预览</h3>
+                  </div>
+                  <span id="colorImageName">未加载原图</span>
+                </div>
+
+                <input class="color-file-input" id="colorSourceFile" type="file" accept="image/*" />
+                <div class="color-preview-wrap">
+                  <label class="color-preview-drop" id="colorSourceDrop" for="colorSourceFile" tabindex="0">
+                    <div class="color-preview-stage">
+                      <canvas id="colorCanvas" width="960" height="720" aria-label="原图调色预览"></canvas>
+                      <div class="color-empty" id="colorSourceEmpty">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                          <rect x="3.5" y="5" width="17" height="14" rx="3" stroke="currentColor" stroke-width="1.4"/>
+                          <circle cx="8.5" cy="10" r="1.5" stroke="currentColor" stroke-width="1.4"/>
+                          <path d="m4.8 17 4.4-4 3 2.7 2.4-2.2 4.6 3.9" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        <strong>上传一张照片</strong>
+                        <span>点击、拖拽或 Ctrl+V 粘贴</span>
+                      </div>
+                    </div>
+                    <span class="color-drop-hint">点击选择 / 拖拽 / Ctrl+V 粘贴</span>
+                  </label>
+                  <button class="color-clear-button" id="colorSourceClear" type="button" aria-label="清除原图" hidden>
+                    <span aria-hidden="true">✕</span>
+                  </button>
+                  <span class="color-compare-hint" id="colorCompareHint" hidden>长按图片对比原图</span>
+                </div>
+
+                <div class="color-aspect-section">
+                  <span class="color-aspect-label">画布比例</span>
+                  <div class="color-aspect-rail" id="colorAspectRail" role="group" aria-label="画布比例">
+                    <button class="color-aspect-button is-active" type="button" data-aspect="original" aria-pressed="true" disabled>原始比例</button>
+                    <button class="color-aspect-button" type="button" data-aspect="16:9" aria-pressed="false" disabled>16:9 横屏</button>
+                    <button class="color-aspect-button" type="button" data-aspect="3:4" aria-pressed="false" disabled>3:4 小红书</button>
+                    <button class="color-aspect-button" type="button" data-aspect="9:16" aria-pressed="false" disabled>9:16 抖音竖屏</button>
+                  </div>
+                </div>
+
+                <div class="color-signature-section">
+                  <div class="color-signature-head">
+                    <span>专属签名</span>
+                    <span>60% OPACITY</span>
+                  </div>
+                  <div class="color-signature-row">
+                    <input
+                      class="color-signature-input"
+                      id="colorWatermarkInput"
+                      type="text"
+                      maxlength="26"
+                      placeholder="输入专属水印文字 (如：Today's OOTD)"
+                      autocomplete="off"
+                      disabled
+                    />
+                    <div class="color-signature-colors" role="group" aria-label="水印颜色">
+                      <button class="color-signature-color is-active" type="button" data-watermark-color="white" aria-pressed="true" disabled>
+                        <span class="color-signature-dot color-signature-dot--white" aria-hidden="true"></span>白
+                      </button>
+                      <button class="color-signature-color" type="button" data-watermark-color="black" aria-pressed="false" disabled>
+                        <span class="color-signature-dot color-signature-dot--black" aria-hidden="true"></span>黑
+                      </button>
+                    </div>
+                  </div>
+                  <div class="color-signature-size-row">
+                    <label class="color-signature-size-label" for="colorWatermarkSize">字号</label>
+                    <input
+                      class="color-signature-size"
+                      id="colorWatermarkSize"
+                      type="range"
+                      min="12"
+                      max="72"
+                      step="1"
+                      value="24"
+                      disabled
+                    />
+                    <output class="color-signature-size-value" id="colorWatermarkSizeValue" for="colorWatermarkSize">24px</output>
+                  </div>
+                  <p class="color-signature-drag-hint">拖动画面中的签名文字，可自由调整位置</p>
+                  <div class="color-signature-styles" id="colorWatermarkStyles" role="group" aria-label="艺术字风格">
+                    <button class="color-signature-style is-active" type="button" data-watermark-style="bold" aria-pressed="true" disabled>极简粗体</button>
+                    <button class="color-signature-style" type="button" data-watermark-style="retro" aria-pressed="false" disabled>复古手写</button>
+                    <button class="color-signature-style" type="button" data-watermark-style="outline" aria-pressed="false" disabled>空心描边</button>
+                    <button class="color-signature-style" type="button" data-watermark-style="glow" aria-pressed="false" disabled>发光阴影</button>
+                  </div>
+                  <div class="color-signature-emojis" id="colorWatermarkEmojis" role="group" aria-label="签名贴纸">
+                    <button class="color-signature-emoji" type="button" data-watermark-emoji="✨" aria-pressed="false" disabled>✨</button>
+                    <button class="color-signature-emoji" type="button" data-watermark-emoji="🎀" aria-pressed="false" disabled>🎀</button>
+                    <button class="color-signature-emoji" type="button" data-watermark-emoji="🐰" aria-pressed="false" disabled>🐰</button>
+                    <button class="color-signature-emoji" type="button" data-watermark-emoji="☁️" aria-pressed="false" disabled>☁️</button>
+                    <button class="color-signature-emoji" type="button" data-watermark-emoji="🍓" aria-pressed="false" disabled>🍓</button>
+                  </div>
+                </div>
+
+                <div class="color-filter-section">
+                  <div class="color-filter-head">
+                    <span>一键网感</span>
+                    <span id="colorFilterCurrent">原图</span>
+                  </div>
+                  <div class="color-filter-rail" id="colorFilters" role="group" aria-label="网感滤镜">
+                    <button class="color-filter-card" type="button" data-filter="冷白皮" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--cool" aria-hidden="true"></span>
+                      <span class="color-filter-name">冷白皮</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="奶油肌" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--cream" aria-hidden="true"></span>
+                      <span class="color-filter-name">奶油肌</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="日系清透" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--clear" aria-hidden="true"></span>
+                      <span class="color-filter-name">日系清透</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="复古CCD" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--ccd" aria-hidden="true"></span>
+                      <span class="color-filter-name">复古CCD</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="法式电影" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--french" aria-hidden="true"></span>
+                      <span class="color-filter-name">法式电影</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="黑白高级" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--bw" aria-hidden="true"></span>
+                      <span class="color-filter-name">黑白高级</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="美拉德风" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--maillard" aria-hidden="true"></span>
+                      <span class="color-filter-name">美拉德风</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="多巴胺" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--dopamine" aria-hidden="true"></span>
+                      <span class="color-filter-name">多巴胺</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="富士胶片" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--fuji" aria-hidden="true"></span>
+                      <span class="color-filter-name">富士胶片</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="千禧Y2K" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--y2k" aria-hidden="true"></span>
+                      <span class="color-filter-name">千禧Y2K</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="清冷感" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--coolblue" aria-hidden="true"></span>
+                      <span class="color-filter-name">清冷感</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="纯欲粉" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--pink" aria-hidden="true"></span>
+                      <span class="color-filter-name">纯欲粉</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="韩系ins风" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--korean" aria-hidden="true"></span>
+                      <span class="color-filter-name">韩系ins风</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="蓝调风" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--blues" aria-hidden="true"></span>
+                      <span class="color-filter-name">蓝调风</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="忧郁风" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--melancholy" aria-hidden="true"></span>
+                      <span class="color-filter-name">忧郁风</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="赛博朋克" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--cyberpunk" aria-hidden="true"></span>
+                      <span class="color-filter-name">赛博朋克</span>
+                    </button>
+                    <button class="color-filter-card" type="button" data-filter="日系暗调" aria-pressed="false" disabled>
+                      <span class="color-filter-swatch color-filter-swatch--japan-dark" aria-hidden="true"></span>
+                      <span class="color-filter-name">日系暗调</span>
+                    </button>
+                  </div>
+                  <div class="color-filter-scroll-indicator" aria-hidden="true">
+                    <span id="colorFilterScrollIndicator"></span>
+                  </div>
+                  <div class="color-filter-strength">
+                    <div class="color-filter-strength-head">
+                      <span>滤镜强度</span>
+                      <output id="colorFilterStrengthValue" for="colorFilterStrength">100%</output>
+                    </div>
+                    <div class="color-filter-strength-row">
+                      <span class="color-filter-strength-hint">原图</span>
+                      <input
+                        class="color-filter-strength-range"
+                        id="colorFilterStrength"
+                        type="range"
+                        min="0"
+                        max="100"
+                        step="1"
+                        value="100"
+                        aria-label="滤镜强度"
+                        disabled
+                      />
+                      <span class="color-filter-strength-hint">浓郁</span>
+                    </div>
+                  </div>
+                </div>
+              </article>
+            </div>
+
+            <section class="color-console" aria-labelledby="colorConsoleTitle">
+              <div class="color-console-head">
+                <div>
+                  <p class="eyebrow">FINE TUNE</p>
+                  <h3 id="colorConsoleTitle">微调面板</h3>
+                </div>
+                <div class="color-console-meta">
+                  <span id="colorConsoleHint">先上传一张照片</span>
+                  <button class="color-reset-button" id="colorResetButton" type="button" disabled>
+                    <span aria-hidden="true">↺</span>
+                    <span>重置</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="color-controls">
+                <label class="color-control" for="colorBrightness">
+                  <span class="color-control-label">亮度 <output id="colorBrightnessValue">100%</output></span>
+                  <input id="colorBrightness" type="range" min="50" max="150" value="100" step="1" disabled />
+                </label>
+                <label class="color-control" for="colorContrast">
+                  <span class="color-control-label">对比度 <output id="colorContrastValue">100%</output></span>
+                  <input id="colorContrast" type="range" min="50" max="150" value="100" step="1" disabled />
+                </label>
+                <label class="color-control" for="colorSaturation">
+                  <span class="color-control-label">饱和度 <output id="colorSaturationValue">100%</output></span>
+                  <input id="colorSaturation" type="range" min="0" max="200" value="100" step="1" disabled />
+                </label>
+                <label class="color-control" for="colorBlur">
+                  <span class="color-control-label">柔光磨皮 <output id="colorBlurValue">0px</output></span>
+                  <input id="colorBlur" type="range" min="0" max="8" value="0" step="0.1" disabled />
+                </label>
+                <label class="color-control" for="colorTemperature">
+                  <span class="color-control-label">色温 <output id="colorTemperatureValue">0</output></span>
+                  <input id="colorTemperature" type="range" min="-100" max="100" value="0" step="1" disabled />
+                </label>
+              </div>
+
+              <section class="color-depth-section" aria-labelledby="colorDepthTitle">
+                <div class="color-depth-head">
+                  <div>
+                    <p class="eyebrow">AI DEPTH</p>
+                    <h4 id="colorDepthTitle">人像虚化</h4>
+                  </div>
+                  <span class="color-depth-status" id="colorDepthStatus">未开启</span>
+                </div>
+
+                <div class="color-depth-toggle-row">
+                  <label class="color-toggle color-depth-toggle" for="colorDepthToggle">
+                    <input id="colorDepthToggle" type="checkbox" disabled />
+                    <span class="color-toggle-track" aria-hidden="true"></span>
+                    <span class="color-depth-toggle-copy">
+                      <strong>人像背景虚化</strong>
+                      <small>AI 自动识别人像，保留清晰主体</small>
+                    </span>
+                  </label>
+                  <span class="color-depth-loading" id="colorDepthLoading" role="status" hidden>
+                    <span class="color-depth-spinner" aria-hidden="true"></span>
+                    AI 正在识别人像…
+                  </span>
+                </div>
+
+                <div class="color-depth-slider-row">
+                  <label for="colorDepthBlur">虚化强度 <output id="colorDepthBlurValue">10px</output></label>
+                  <input id="colorDepthBlur" type="range" min="0" max="20" step="1" value="10" disabled />
+                </div>
+                <p class="color-depth-message" id="colorDepthMessage" role="status" aria-live="polite"></p>
+              </section>
+
+              <div class="color-caption-section">
+                <div class="color-caption-head">
+                  <span>心情贴纸</span>
+                  <span>MOOD &amp; STICKERS</span>
+                </div>
+                <div class="color-caption-controls">
+                  <input
+                    class="color-caption-input"
+                    id="colorCaptionInput"
+                    type="text"
+                    maxlength="30"
+                    placeholder="写下此刻的心情..."
+                    autocomplete="off"
+                    disabled
+                  />
+                  <label class="color-caption-color" for="colorCaptionColor">
+                    <span>颜色</span>
+                    <select id="colorCaptionColor" disabled>
+                      <option value="white">白</option>
+                      <option value="black">黑</option>
+                      <option value="pink">粉</option>
+                    </select>
+                  </label>
+                </div>
+                <div class="color-sticker-row" id="colorStickerRow" role="group" aria-label="水果贴纸">
+                  <button class="color-sticker-button" type="button" data-sticker="🍊" aria-label="添加橘子贴纸" disabled>🍊</button>
+                  <button class="color-sticker-button" type="button" data-sticker="🍉" aria-label="添加西瓜贴纸" disabled>🍉</button>
+                  <button class="color-sticker-button" type="button" data-sticker="🍋" aria-label="添加柠檬贴纸" disabled>🍋</button>
+                  <button class="color-sticker-button" type="button" data-sticker="🍓" aria-label="添加草莓贴纸" disabled>🍓</button>
+                  <button class="color-sticker-button" type="button" data-sticker="🍑" aria-label="添加桃子贴纸" disabled>🍑</button>
+                  <button class="color-sticker-button" type="button" data-sticker="🍇" aria-label="添加葡萄贴纸" disabled>🍇</button>
+                  <button class="color-sticker-button" type="button" data-sticker="🍎" aria-label="添加苹果贴纸" disabled>🍎</button>
+                  <button class="color-sticker-button" type="button" data-sticker="🥝" aria-label="添加猕猴桃贴纸" disabled>🥝</button>
+                  <button class="color-sticker-button" type="button" data-sticker="🍍" aria-label="添加菠萝贴纸" disabled>🍍</button>
+                  <button class="color-sticker-button" type="button" data-sticker="🥥" aria-label="添加椰子贴纸" disabled>🥥</button>
+                  <button class="color-sticker-delete" id="colorStickerDelete" type="button" hidden>删除选中贴纸</button>
+                </div>
+              </div>
+
+              <div class="color-mood-row">
+                <label class="color-toggle" for="colorPolaroid">
+                  <input id="colorPolaroid" type="checkbox" disabled />
+                  <span class="color-toggle-track" aria-hidden="true"></span>
+                  <span class="color-toggle-copy">
+                    <strong>拍立得相框</strong>
+                    <small>白色宽边与英文留白，氛围感直接拉满</small>
+                  </span>
+                </label>
+                <p class="color-status" id="colorStatus" role="status" aria-live="polite">请先上传一张原图。</p>
+              </div>
+
+              <div class="color-polaroid-panel" id="colorPolaroidPanel" hidden>
+                <div class="color-polaroid-panel-head">
+                  <span>相框文字</span>
+                  <span>CAPTION STUDIO</span>
+                </div>
+
+                <label class="color-polaroid-field" for="colorPolaroidText">
+                  <span>文字内容</span>
+                  <input
+                    class="color-polaroid-input"
+                    id="colorPolaroidText"
+                    type="text"
+                    maxlength="32"
+                    value="AURORA MOMENT"
+                    autocomplete="off"
+                    disabled
+                  />
+                </label>
+
+                <label class="color-polaroid-field color-polaroid-subfield" id="colorPolaroidSubtextField" for="colorPolaroidSubtext" hidden>
+                  <span>英文副标题</span>
+                  <input
+                    class="color-polaroid-input"
+                    id="colorPolaroidSubtext"
+                    type="text"
+                    maxlength="40"
+                    value="A MOMENT TO REMEMBER"
+                    autocomplete="off"
+                    disabled
+                  />
+                </label>
+
+                <div class="color-polaroid-block">
+                  <div class="color-polaroid-label-row">
+                    <span>排版模式</span>
+                    <span>LAYOUT</span>
+                  </div>
+                  <div class="color-polaroid-layouts" id="colorPolaroidLayouts" role="group" aria-label="相框排版模式">
+                    <button class="color-polaroid-layout is-active" type="button" data-polaroid-layout="single" aria-pressed="true" disabled>极简单行</button>
+                    <button class="color-polaroid-layout" type="button" data-polaroid-layout="dual" aria-pressed="false" disabled>中英双拼</button>
+                    <button class="color-polaroid-layout" type="button" data-polaroid-layout="subtitle" aria-pressed="false" disabled>小巧副标题</button>
+                  </div>
+                </div>
+
+                <div class="color-polaroid-block">
+                  <div class="color-polaroid-label-row">
+                    <span>字体样式</span>
+                    <span>左右滑动查看更多</span>
+                  </div>
+                  <div class="color-polaroid-styles" id="colorPolaroidStyles" role="group" aria-label="相框字体样式">
+                    <button class="color-polaroid-style color-polaroid-style--minimal is-active" type="button" data-polaroid-style="minimal" aria-pressed="true" disabled>极简黑体</button>
+                    <button class="color-polaroid-style color-polaroid-style--song" type="button" data-polaroid-style="song" aria-pressed="false" disabled>文艺宋体</button>
+                    <button class="color-polaroid-style color-polaroid-style--handwritten" type="button" data-polaroid-style="handwritten" aria-pressed="false" disabled>优雅楷体</button>
+                    <button class="color-polaroid-style color-polaroid-style--rounded" type="button" data-polaroid-style="rounded" aria-pressed="false" disabled>粗犷圆体</button>
+                    <button class="color-polaroid-style color-polaroid-style--serif" type="button" data-polaroid-style="serif" aria-pressed="false" disabled>英文复古衬线</button>
+                    <button class="color-polaroid-style color-polaroid-style--modern" type="button" data-polaroid-style="modern" aria-pressed="false" disabled>现代无衬线</button>
+                    <button class="color-polaroid-style color-polaroid-style--didot" type="button" data-polaroid-style="didot" aria-pressed="false" disabled>法式优雅</button>
+                    <button class="color-polaroid-style color-polaroid-style--typewriter" type="button" data-polaroid-style="typewriter" aria-pressed="false" disabled>复古打字机</button>
+                    <button class="color-polaroid-style color-polaroid-style--impact" type="button" data-polaroid-style="impact" aria-pressed="false" disabled>潮流粗体</button>
+                    <button class="color-polaroid-style color-polaroid-style--light" type="button" data-polaroid-style="light" aria-pressed="false" disabled>轻盈细体</button>
+                    <button class="color-polaroid-style color-polaroid-style--doodle" type="button" data-polaroid-style="doodle" aria-pressed="false" disabled>随性手写</button>
+                    <button class="color-polaroid-style color-polaroid-style--caveat" type="button" data-polaroid-style="caveat" aria-pressed="false" disabled>文艺英文</button>
+                  </div>
+                </div>
+
+                <div class="color-polaroid-block">
+                  <div class="color-polaroid-label-row">
+                    <span>文字颜色</span>
+                    <span>10 COLORS</span>
+                  </div>
+                  <div class="color-polaroid-colors" id="colorPolaroidColors" role="group" aria-label="相框文字颜色">
+                    <button class="color-polaroid-color is-active" type="button" data-polaroid-color="#1A1A1A" style="--polaroid-color: #1A1A1A" aria-label="黑色" aria-pressed="true" disabled></button>
+                    <button class="color-polaroid-color" type="button" data-polaroid-color="#FFFFFF" style="--polaroid-color: #FFFFFF" aria-label="白色" aria-pressed="false" disabled></button>
+                    <button class="color-polaroid-color" type="button" data-polaroid-color="#6E6E73" style="--polaroid-color: #6E6E73" aria-label="深灰色" aria-pressed="false" disabled></button>
+                    <button class="color-polaroid-color" type="button" data-polaroid-color="#FFB7C5" style="--polaroid-color: #FFB7C5" aria-label="樱花粉" aria-pressed="false" disabled></button>
+                    <button class="color-polaroid-color" type="button" data-polaroid-color="#A7B8C8" style="--polaroid-color: #A7B8C8" aria-label="雾霾蓝" aria-pressed="false" disabled></button>
+                    <button class="color-polaroid-color" type="button" data-polaroid-color="#D8BFD8" style="--polaroid-color: #D8BFD8" aria-label="香芋紫" aria-pressed="false" disabled></button>
+                    <button class="color-polaroid-color" type="button" data-polaroid-color="#8B0000" style="--polaroid-color: #8B0000" aria-label="复古红" aria-pressed="false" disabled></button>
+                    <button class="color-polaroid-color" type="button" data-polaroid-color="#A97142" style="--polaroid-color: #A97142" aria-label="焦糖棕" aria-pressed="false" disabled></button>
+                    <button class="color-polaroid-color" type="button" data-polaroid-color="#FFFDD0" style="--polaroid-color: #FFFDD0" aria-label="奶油白" aria-pressed="false" disabled></button>
+                    <button class="color-polaroid-color" type="button" data-polaroid-color="#A8D5BA" style="--polaroid-color: #A8D5BA" aria-label="薄荷绿" aria-pressed="false" disabled></button>
+                  </div>
+                </div>
+
+                <div class="color-polaroid-block color-polaroid-size-block">
+                  <div class="color-polaroid-label-row">
+                    <span>字号大小</span>
+                    <span class="color-polaroid-size-value" id="colorPolaroidSizeValue">24px</span>
+                  </div>
+                  <input
+                    class="color-polaroid-size-range"
+                    id="colorPolaroidFontSize"
+                    type="range"
+                    min="12"
+                    max="72"
+                    step="1"
+                    value="24"
+                    aria-label="相框文字字号"
+                    disabled
+                  />
+                </div>
+
+                <div class="color-polaroid-block color-polaroid-detail-block">
+                  <div class="color-polaroid-label-row">
+                    <span>字间距</span>
+                    <span class="color-polaroid-detail-value" id="colorPolaroidLetterSpacingValue">2px</span>
+                  </div>
+                  <input
+                    class="color-polaroid-detail-range"
+                    id="colorPolaroidLetterSpacing"
+                    type="range"
+                    min="0"
+                    max="12"
+                    step="1"
+                    value="2"
+                    aria-label="相框文字字间距"
+                    disabled
+                  />
+                  <div class="color-polaroid-label-row color-polaroid-label-row--spaced">
+                    <span>倾斜角度</span>
+                    <span class="color-polaroid-detail-value" id="colorPolaroidTiltValue">0°</span>
+                  </div>
+                  <input
+                    class="color-polaroid-detail-range"
+                    id="colorPolaroidTilt"
+                    type="range"
+                    min="-15"
+                    max="15"
+                    step="1"
+                    value="0"
+                    aria-label="相框文字倾斜角度"
+                    disabled
+                  />
+                </div>
+
+                <div class="color-polaroid-glow">
+                  <label class="color-toggle color-polaroid-glow-toggle" for="colorPolaroidGlow">
+                    <span>发光效果</span>
+                    <input id="colorPolaroidGlow" type="checkbox" disabled />
+                    <span class="color-toggle-track" aria-hidden="true"></span>
+                  </label>
+                  <div class="color-polaroid-glow-controls" id="colorPolaroidGlowControls" hidden>
+                    <div class="color-polaroid-glow-label-row">
+                      <label for="colorPolaroidGlowBlur">亮度 / 模糊度</label>
+                      <output id="colorPolaroidGlowValue" for="colorPolaroidGlowBlur">15</output>
+                    </div>
+                    <input
+                      class="color-polaroid-glow-range"
+                      id="colorPolaroidGlowBlur"
+                      type="range"
+                      min="0"
+                      max="30"
+                      step="1"
+                      value="15"
+                      disabled
+                    />
+                    <div class="color-polaroid-glow-color-block">
+                      <div class="color-polaroid-glow-label-row">
+                        <span>发光颜色</span>
+                        <span>NEON GLOW</span>
+                      </div>
+                      <div class="color-polaroid-glow-colors" id="colorPolaroidGlowColors" role="group" aria-label="相框发光颜色">
+                        <button class="color-polaroid-glow-color is-active" type="button" data-polaroid-glow-color="#FFFFFF" style="--glow-color: #FFFFFF" aria-label="纯白" aria-pressed="true" disabled></button>
+                        <button class="color-polaroid-glow-color" type="button" data-polaroid-glow-color="#FF4FA3" style="--glow-color: #FF4FA3" aria-label="荧光粉" aria-pressed="false" disabled></button>
+                        <button class="color-polaroid-glow-color" type="button" data-polaroid-glow-color="#5EE7FF" style="--glow-color: #5EE7FF" aria-label="青蓝" aria-pressed="false" disabled></button>
+                        <button class="color-polaroid-glow-color" type="button" data-polaroid-glow-color="#FFE45E" style="--glow-color: #FFE45E" aria-label="亮黄" aria-pressed="false" disabled></button>
+                        <button class="color-polaroid-glow-color" type="button" data-polaroid-glow-color="#39FF14" style="--glow-color: #39FF14" aria-label="荧光绿" aria-pressed="false" disabled></button>
+                        <button class="color-polaroid-glow-color" type="button" data-polaroid-glow-color="#B57BFF" style="--glow-color: #B57BFF" aria-label="香芋紫" aria-pressed="false" disabled></button>
+                        <button class="color-polaroid-glow-color" type="button" data-polaroid-glow-color="#FF9A5A" style="--glow-color: #FF9A5A" aria-label="暖橙" aria-pressed="false" disabled></button>
+                        <button class="color-polaroid-glow-color" type="button" data-polaroid-glow-color="#6E6E73" style="--glow-color: #6E6E73" aria-label="深空灰" aria-pressed="false" disabled></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="color-actions-row">
+                <button class="color-save-button" id="colorSaveButton" type="button" disabled>保存</button>
+                <button class="color-copy-button" id="colorCopyButton" type="button" disabled>
+                  <span class="color-copy-icon" aria-hidden="true">📋</span>
+                  <span id="colorCopyButtonText">复制图片</span>
+                </button>
+                <button class="color-compare-button" id="colorCompareButton" type="button" disabled>生成对比图</button>
+              </div>
+              <div class="color-copy-toast" id="colorCopyToast" role="status" aria-live="polite"></div>
+            </section>
+          </section>
+
+          <!-- 账号管理 -->
+          <section class="view-panel account-view" id="accountView" aria-labelledby="accountTitle" hidden>
+            <div class="section-heading">
+              <p class="eyebrow">ACCOUNT</p>
+              <div class="section-title-row">
+                <h2 id="accountTitle">账号管理</h2>
+                <span class="count-pill" id="accountCountPill">0 位</span>
+              </div>
+              <p class="section-intro">管理这个工作台里的成员账号与访问权限。</p>
+            </div>
+
+            <section class="memory-gate account-gate" id="accountGate" aria-labelledby="accountGateTitle">
+              <div class="memory-gate-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none">
+                  <path d="M12 3.5 19 6v5.4c0 4.2-2.9 7.6-7 9.1-4.1-1.5-7-4.9-7-9.1V6l7-2.5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                  <path d="m9.2 11.7 1.9 2 3.5-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <p class="eyebrow">ADMIN ACCESS</p>
+              <h3 id="accountGateTitle">账号管理验证</h3>
+              <p class="memory-gate-intro">输入管理密码，进入成员管理。</p>
+
+              <form class="memory-unlock-form" id="accountUnlockForm" novalidate>
+                <div class="memory-password-shell" id="accountPasswordShell">
+                  <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M7.5 10V7.7a4.5 4.5 0 0 1 9 0V10M6 10h12a1.5 1.5 0 0 1 1.5 1.5v7A1.5 1.5 0 0 1 18 20H6a1.5 1.5 0 0 1-1.5-1.5v-7A1.5 1.5 0 0 1 6 10Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+                  </svg>
+                  <input
+                    id="accountPassword"
+                    type="password"
+                    maxlength="32"
+                    autocomplete="off"
+                    placeholder="输入管理密码"
+                    aria-label="管理密码"
+                    required
+                  />
+                </div>
+                <button class="primary-button" type="submit">进入账号管理</button>
+              </form>
+
+              <p class="memory-gate-status" id="accountGateStatus" role="status" aria-live="polite"></p>
+              <p class="memory-gate-hint">仅超级管理员可添加或删除成员</p>
+            </section>
+
+            <div class="account-content" id="accountContent" tabindex="-1" hidden>
+              <div class="account-grid">
+                <section class="account-card account-form-card">
+                  <form class="member-form" id="memberForm" novalidate>
+                    <div class="form-heading">
+                      <h3>添加成员</h3>
+                      <span>NEW MEMBER</span>
+                    </div>
+
+                    <div class="account-fields">
+                      <div class="field-group">
+                        <label class="field-label" for="memberName">成员姓名</label>
+                        <input class="account-input" id="memberName" type="text" maxlength="20" placeholder="例如：张三" autocomplete="off" required />
+                      </div>
+                      <div class="field-group">
+                        <label class="field-label" for="memberAccount">成员账号</label>
+                        <input class="account-input" id="memberAccount" type="text" maxlength="30" placeholder="登录账号" autocomplete="off" required />
+                      </div>
+                      <div class="field-group">
+                        <label class="field-label" for="memberPassword">成员密码</label>
+                        <input class="account-input" id="memberPassword" type="password" maxlength="32" placeholder="登录密码" autocomplete="new-password" required />
+                      </div>
+                    </div>
+
+                    <button class="primary-button" type="submit">添加成员</button>
+                    <p class="form-status" id="memberStatus" role="status" aria-live="polite"></p>
+                  </form>
+                </section>
+
+                <section class="account-card account-list-card">
+                  <div class="account-list-head">
+                    <h3>成员列表</h3>
+                    <span id="accountListMeta">0 位成员</span>
+                  </div>
+                  <div class="account-list" id="accountList"></div>
+                </section>
+              </div>
+            </div>
+          </section>
+
+          <!-- 小金库 -->
+          <section class="view-panel wallet-view" id="walletView" aria-labelledby="walletTitle" hidden>
+            <div class="section-heading">
+              <div>
+                <p class="eyebrow">BUDGET</p>
+                <h2 id="walletTitle">小金库<span class="title-dot">.</span></h2>
+              </div>
+              <span class="count-pill" id="walletCountPill">本月 0 笔</span>
+            </div>
+            <p class="section-intro">记录每月收支，保持清晰的预算与余额。</p>
+
+            <section class="wallet-summary" aria-labelledby="walletSummaryTitle">
+              <div class="wallet-summary-head">
+                <div>
+                  <p class="eyebrow">MONTHLY BUDGET</p>
+                  <h3 id="walletSummaryTitle">本月预算</h3>
+                </div>
+                <span class="wallet-month-label" id="walletMonthLabel">本月</span>
+              </div>
+
+              <div class="wallet-metrics">
+                <div class="wallet-metric">
+                  <span class="wallet-metric-label">本月预算</span>
+                  <button class="wallet-budget-value" id="walletBudgetButton" type="button" title="点击修改预算">¥3,000.00</button>
+                  <input class="wallet-budget-input" id="walletBudgetInput" type="number" min="0" step="0.01" inputmode="decimal" aria-label="本月预算" hidden />
+                </div>
+                <div class="wallet-metric">
+                  <span class="wallet-metric-label">本月支出</span>
+                  <strong class="wallet-metric-value" id="walletSpent">¥0.00</strong>
+                </div>
+                <div class="wallet-metric">
+                  <span class="wallet-metric-label">可用余额</span>
+                  <strong class="wallet-metric-value" id="walletRemaining">¥3,000.00</strong>
+                </div>
+              </div>
+
+              <div class="wallet-progress">
+                <div class="wallet-progress-track" role="progressbar" aria-label="本月预算使用进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="walletProgressTrack">
+                  <span class="wallet-progress-fill" id="walletProgressFill"></span>
+                </div>
+                <span class="wallet-progress-label" id="walletProgressLabel">预算使用 0%</span>
+              </div>
+            </section>
+
+            <section class="wallet-form-card">
+              <form class="wallet-form" id="walletForm" novalidate>
+                <div class="form-heading">
+                  <h3>记一笔账</h3>
+                  <span>NEW ENTRY</span>
+                </div>
+
+                <div class="wallet-amount-row">
+                  <div class="wallet-amount-shell">
+                    <span aria-hidden="true">¥</span>
+                    <input
+                      id="walletAmount"
+                      type="number"
+                      min="0"
+                      step="0.01"
+                      inputmode="decimal"
+                      placeholder="0.00"
+                      autocomplete="off"
+                      aria-label="金额"
+                      required
+                    />
+                  </div>
+                  <div class="wallet-type-toggle" role="group" aria-label="账单类型">
+                    <button class="wallet-type is-active" type="button" data-wallet-type="expense" aria-pressed="true">支出</button>
+                    <button class="wallet-type" type="button" data-wallet-type="income" aria-pressed="false">收入</button>
+                  </div>
+                </div>
+
+                <div class="wallet-fields">
+                  <label class="wallet-field" for="walletCategory">
+                    <span class="field-label">分类</span>
+                    <select id="walletCategory">
+                      <option value="餐饮">餐饮 🍔</option>
+                      <option value="购物">购物 🛍️</option>
+                      <option value="美妆">美妆 💄</option>
+                      <option value="交通">交通 🚗</option>
+                      <option value="娱乐">娱乐 🎬</option>
+                      <option value="其他">其他 📦</option>
+                    </select>
+                  </label>
+                  <label class="wallet-field" for="walletNote">
+                    <span class="field-label">备注</span>
+                    <input id="walletNote" type="text" maxlength="60" placeholder="写点什么..." autocomplete="off" />
+                  </label>
+                </div>
+
+                <button class="primary-button wallet-submit" type="submit">记下这一笔</button>
+                <p class="form-status" id="walletStatus" role="status" aria-live="polite"></p>
+              </form>
+            </section>
+
+            <section class="wallet-list-card" aria-labelledby="walletListTitle">
+              <div class="wallet-list-head">
+                <h3 id="walletListTitle">账单记录</h3>
+                <span id="walletListMeta">0 笔</span>
+              </div>
+              <div class="wallet-list" id="walletList"></div>
+            </section>
+          </section>
+        </main>
+      </div>
+    </section>
+  </main>
+
+  <!-- 账号或密码错误提示 -->
+  <dialog class="modal error-dialog" id="errorDialog" aria-labelledby="errorTitle">
+    <button class="modal-close" id="closeErrorDialog" type="button" aria-label="关闭提示">
+      <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+    </button>
+    <div class="modal-icon modal-icon--error" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none">
+        <path d="M12 7.5v5.2M12 16.4v.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+        <path d="M10.3 4.6 3.2 17.3A2 2 0 0 0 4.9 20h14.2a2 2 0 0 0 1.7-2.7L13.7 4.6a2 2 0 0 0-3.4 0Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <p class="modal-kicker">ACCESS DENIED</p>
+    <h2 id="errorTitle">账号或密码不正确</h2>
+    <p class="modal-message">请检查账号与密码后重新输入。</p>
+    <button class="primary-button modal-button" id="retryButton" type="button">重新输入</button>
+  </dialog>
+
+  <p class="sr-only" id="statusAnnouncer" role="status" aria-live="polite"></p>
+
+  <script src="script.js?v=64"></script>
+</body>
+</html>
